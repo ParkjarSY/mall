@@ -4,6 +4,7 @@
       <a href="#">
         <img src="#" alt="">
         <h2>本周流行</h2>
+        <h1>这是一张每日推荐图片</h1>
       </a>
     </div>
 </template>
