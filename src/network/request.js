@@ -2,7 +2,7 @@ import Axios from 'axios'
 
 export function request(config) {
   const net = Axios.create({
-    baseURL : "http://123.207.32.32:8000/api/wh",
+    baseURL : "http://152.136.185.210:8000/api/h3",
     timeout:3000
   })
 
@@ -12,7 +12,8 @@ export function request(config) {
     }, err =>{
       console.log(err);
   });
-
   //返回promise
   return net(config)
 }
+
+

@@ -3,13 +3,16 @@
     overflow: hidden;
     position: relative;
     height: 100%;
+
   }
   .mint-swipe-items-wrap {
     position: relative;
     overflow: hidden;
-    height: 100%;
+    height: 95%;
+    background: #eeeeee;
     -webkit-transform: translateZ(0);
     transform: translateZ(0)
+
   }
   .mint-swipe-items-wrap > div {
     position: absolute;

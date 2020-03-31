@@ -18,6 +18,8 @@
     </div>
     <recommand :recommends="recommends"/>
     <feature-view/>
+    <tab-control :titles="['最新','推荐','热门']" class="tab-control" @tabClick="tabClick"/>
+    <goods-list :goods="showGoods"/>
     <ul>
       <li>hello1</li>
       <li>hello2</li>
@@ -105,36 +107,88 @@
 
 <script>
   import NavBar from'components/common/navbar/NavBar'
-  import {getHomeMultiData} from 'network/home'
-  import { Swipe, SwipeItem } from 'components/common/swiper//index';
+  import TabControl from 'components/content/tabcontroll/TabControl'
+  import GoodsList from 'components/content/goods/GoodsList'
+
   import Recommand from './childP/JCRecommendHome'
   import FeatureView from './childP/FeatureView'
+  import { Swipe, SwipeItem } from 'components/common/swiper//index';
+
+  import {
+    getHomeMultiData,
+    getHomeGoods,
+  } from 'network/home'
 
   export default {
     name: "home",
     components:{
-      FeatureView,
       NavBar,
-      Swipe,
-      SwipeItem,
-      Recommand,
-    },
+      TabControl,
+      GoodsList,
 
+      FeatureView,
+      Recommand,
+      SwipeItem,
+      Swipe,
+    },
+    computed:{
+      showGoods(){
+        return this.goods[this.currentType].list
+      }
+    },
     data(){
       return {
         banners : [],
         recommends :[],
+        goods:{
+          'pop':{page:0,list:[]},
+          'new':{page:0,list:[]},
+          'sell':{page:0,list:[]},
+        },
+        currentType:'pop'
       }
     },
     //生命周期函数
     created() {
       //请求多个数据
-      getHomeMultiData(  ).then( res =>{
-        this.banners = res.data.banner.list;
-        console.log(this.banners);
-        this.recommends = res.data.recommend.list;
-        console.log(res);
-      });
+     this.getHomeMultiData();
+     this.getHomeGoods('pop');
+     this.getHomeGoods('new');
+     this.getHomeGoods('sell');
+    },
+    methods:{
+      // 事件监听
+      tabClick(index){
+        switch (index) {
+          case 0:
+            this.currentType = 'pop';break;
+          case 1:
+            this.currentType = 'new';break;
+          case 2:
+            this.currentType = 'sell';break;
+        }
+      },
+
+
+
+      /*
+      * 网络请求
+      */
+      getHomeMultiData(){
+        getHomeMultiData(  ).then( res =>{
+          this.banners = res.data.banner.list;
+          console.log(this.banners);
+          this.recommends = res.data.recommend.list;
+          console.log(res);
+        })
+      },
+      getHomeGoods(type){
+        const page = this.goods[type].page + 1;
+        getHomeGoods(type,page).then(res =>{
+          this.goods[type].list.push(...res.data.list)
+          this.goods[type].page +=1
+        })
+      }
     }
   }
 </script>
@@ -161,5 +215,12 @@
   }
   .my-swipe img {
     width: 100%;
+  }
+  .tab-control{
+    /*向上运动并停留*/
+    position: sticky;
+    top: 44px;
+    background: #fff;
+    z-index: 9;
   }
 </style>
