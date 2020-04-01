@@ -2,7 +2,8 @@ import Axios from 'axios'
 
 export function request(config) {
   const net = Axios.create({
-    baseURL : "http://152.136.185.210:8000/api/h3",
+    //此处错误端口
+    baseURL : "http://152.136.100.210:8000/api/h3",
     timeout:3000
   })
 
