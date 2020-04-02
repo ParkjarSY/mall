@@ -1,9 +1,10 @@
 <template>
 <!--  内容少不需要写插槽-->
     <div class="tab-control">
-      <div v-for="(item,index) in titles"
-           class="tab-control-items" :class="{active:index === currentIndex}"
-      @click="tabClick(index)">
+      <div v-for="(item,index) in titls"
+           class="tab-control-items"
+           :class="{active:index === currentIndex}"
+           @click="tabClick(index)">
         <span>{{item}}</span>
       </div>
     </div>
@@ -13,7 +14,7 @@
   export default {
     name: "TabControl",
     props:{
-      titles:{
+      titls:{
         type:[],
         default(){
           return []

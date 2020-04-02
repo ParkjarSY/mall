@@ -8,7 +8,13 @@
       </nav-bar>
     </div>
      <div id="home">
-       <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+       <scroll class="content"
+               ref="scroll"
+               :probe-type="3"
+               @scroll="contentScroll"
+               :pull-up-load="true"
+               @pullingUp="loadMore"
+       >
        <swipe class="my-swipe">
          <swipe-item v-for="i in banners">
            <a :href="i.link">
@@ -18,7 +24,7 @@
        </swipe>
      <recommand :recommends="recommends"/>
      <feature-view/>
-     <tab-control :titles="['最新','推荐','热门']" class="tab-control" @tabClick="tabClick"/>
+     <tab-control :titls="['最新','推荐','热门']" class="tab-control" @tabClick="tabClick"/>
      <goods-list :goods="showGoods"/>
    </scroll>
        <!--  加上native才能监听-->
@@ -75,7 +81,6 @@
         isShow : false ,
       }
     },
-
     //生命周期函数
     created() {
       //请求多个数据
@@ -104,6 +109,11 @@
       contentScroll(position){
         this.isShow = -(position.y) > 1500 ? true:false;
       },
+      //上拉加载更多
+      loadMore(){
+        this.getHomeGoods(this.currentType )
+        this.$refs.scroll.scroll.refresh()
+      },
       /*
       * 网络请求
       */
@@ -120,6 +130,8 @@
         getHomeGoods(type,page).then(res =>{
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page +=1
+
+          this.$refs.scroll.finishPullUp()
         })
       },
     }
