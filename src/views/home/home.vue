@@ -88,8 +88,30 @@
      this.getHomeGoods('pop');
      this.getHomeGoods('new');
      this.getHomeGoods('sell');
+
+
+
+    },
+    mounted(){
+      //防抖函数的使用
+      const refresh = this.debounce(this.$refs.scroll.refresh(),900);
+      //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
+      this.$bus.$on('itemImageLoad',()=>{
+        console.log("-=--");
+        refresh()
+      })
     },
     methods:{
+      //防抖
+      debounce(func,delay){
+        let timer = null
+        return function(...args) {
+          if(timer) clearTimeout(timer)
+          setTimeout(()=>{
+            func.apply(args)
+          },delay)
+        }
+      },
       //返回顶部,访问组件的scrollTO方法
       backClick(){
         this.$refs.scroll.scrollTo(0,0,600)
@@ -105,6 +127,7 @@
             this.currentType = 'sell';break;
         }
       },
+
       //位置监听
       contentScroll(position){
         this.isShow = -(position.y) > 1500 ? true:false;

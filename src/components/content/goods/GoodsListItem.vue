@@ -1,6 +1,6 @@
 <template>
     <div class="goods">
-      <img :src="goodItem.show.img" alt="">
+      <img :src="goodItem.show.img" alt="" @load="imageLoad">
       <div class="goods-info">
         <p>{{goodItem.title}}</p>
         <span class="price">{{goodItem.price}}</span>
@@ -18,6 +18,14 @@
         default(){
           return {}
         }
+      }
+    },
+    methods:{
+      imageLoad(){
+        //将直接操作的东西放到vuex上
+        //用bus 总线来更改信息
+
+        this.$bus.$emit('itemImageLoad')
       }
     }
   }
