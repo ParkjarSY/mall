@@ -6,15 +6,23 @@
         <div slot="center">world</div>
         <div slot="right">PJC</div>
       </nav-bar>
+      <tab-control :titls="['最新','推荐','热门']"
+                   @tabClick="tabClick"
+                   v-show="tabFixed"
+                   @ImageLoad="ImageLoda"
+                   ref="tabControl"/>
     </div>
-     <div id="home">
-       <scroll class="content"
+
+     <div id="home" >
+
+     <scroll class="content"
                ref="scroll"
                :probe-type="3"
                @scroll="contentScroll"
                :pull-up-load="true"
                @pullingUp="loadMore"
        >
+
        <swipe class="my-swipe">
          <swipe-item v-for="i in banners">
            <a :href="i.link">
@@ -24,7 +32,7 @@
        </swipe>
      <recommand :recommends="recommends"/>
      <feature-view/>
-     <tab-control :titls="['最新','推荐','热门']" class="tab-control" @tabClick="tabClick"/>
+     <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick"/>
      <goods-list :goods="showGoods"/>
    </scroll>
        <!--  加上native才能监听-->
@@ -43,6 +51,8 @@
   import Recommand from './childP/JCRecommendHome'
   import FeatureView from './childP/FeatureView'
   import { Swipe, SwipeItem } from 'components/common/swiper/index';
+
+  import {debounce} from "components/common/util";
 
   import {
     getHomeMultiData,
@@ -77,8 +87,11 @@
           'new':{page:0,list:[]},
           'sell':{page:0,list:[]},
         },
+        //默认显示种类
         currentType:'pop',
         isShow : false ,
+        tabOffsetTop:0,
+        tabFixed:false,
       }
     },
     //生命周期函数
@@ -88,30 +101,21 @@
      this.getHomeGoods('pop');
      this.getHomeGoods('new');
      this.getHomeGoods('sell');
-
-
-
     },
     mounted(){
       //防抖函数的使用
-      const refresh = this.debounce(this.$refs.scroll.refresh(),900);
+      const refresh = debounce(this.$refs.scroll.refresh(),50);
       //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
       this.$bus.$on('itemImageLoad',()=>{
         console.log("-=--");
         refresh()
       })
+
+
     },
     methods:{
       //防抖
-      debounce(func,delay){
-        let timer = null
-        return function(...args) {
-          if(timer) clearTimeout(timer)
-          setTimeout(()=>{
-            func.apply(args)
-          },delay)
-        }
-      },
+
       //返回顶部,访问组件的scrollTO方法
       backClick(){
         this.$refs.scroll.scrollTo(0,0,600)
@@ -128,14 +132,22 @@
         }
       },
 
-      //位置监听
+      //滚动位置监听
       contentScroll(position){
+        //判断backTop是否显示
         this.isShow = -(position.y) > 1500 ? true:false;
+        //判断tabControl是否吸顶
+        this.tabFixed = -(position.y)>this.tabOffsetTop ? true:false
       },
       //上拉加载更多
       loadMore(){
         this.getHomeGoods(this.currentType )
         this.$refs.scroll.scroll.refresh()
+      },
+      ImageLoda(){
+        console.log(this.$refs.tabControl.$el.offsetTop);
+        console.log("1111");
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
       },
       /*
       * 网络请求
@@ -163,17 +175,17 @@
 
 <style scoped>
   #home{
-    padding-top: 44px;
+
     height: 100vh;
   }
   .home-nav {
     background-color: var(--color-tint);
     color: #45454d;
-
-    position: fixed;
+    z-index: 9;
+    position: relative;
     left: 0px;
     right: 0px;
-    z-index: 9;
+
   }
   .my-swipe {
     height: 200px;
@@ -186,13 +198,14 @@
     width: 100%;
   }
   .tab-control{
-    /*向上运动并停留*/
-    position: sticky;
-    top: 44px;
+    position: fixed;
+    left: 0px;
+    right: 0px;
     background: #fff;
     z-index: 9;
   }
   .content{
     height: calc(100% - 45px);
   }
+
 </style>

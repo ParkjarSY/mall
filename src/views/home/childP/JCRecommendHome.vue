@@ -3,7 +3,7 @@
     <div class="recommend">
       <div v-for="item in recommends" class="recommend-item">
         <a :href="item.link">
-          <img :src="item.image" alt="">
+          <img :src="item.image" alt="" @load="imageLoda">
           <div>{{item.title}}</div>
         </a>
       </div>
@@ -20,7 +20,21 @@
             return[]
           }
         }
-      }
+      },
+      data(){
+        return{
+          LoadTime:true
+        }
+      },
+      methods:{
+        imageLoda(){
+         if (this.LoadTime){
+           this.$emit('ImageLoad')
+           this.LoadTime = false;
+         }
+
+        },
+      },
     }
 </script>
 
