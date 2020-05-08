@@ -26,15 +26,8 @@
           LoadTime:true
         }
       },
-      methods:{
-        imageLoda(){
-         if (this.LoadTime){
-           this.$emit('ImageLoad')
-           this.LoadTime = false;
-         }
 
-        },
-      },
+
     }
 </script>
 

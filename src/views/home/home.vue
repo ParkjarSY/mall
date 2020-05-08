@@ -6,15 +6,15 @@
         <div slot="center">world</div>
         <div slot="right">PJC</div>
       </nav-bar>
-      <tab-control :titls="['最新','推荐','热门']"
-                   @tabClick="tabClick"
-                   v-show="tabFixed"
-                   @ImageLoad="ImageLoda"
-                   ref="tabControl"/>
+
     </div>
 
      <div id="home" >
-
+       <tab-control :titls="['最新','推荐','热门']"
+                    @tabClick="tabClick"
+                    v-show="tabFixed"
+                    ref="tabControl"
+                    class="tab-control"/>
      <scroll class="content"
                ref="scroll"
                :probe-type="3"
@@ -26,13 +26,13 @@
        <swipe class="my-swipe">
          <swipe-item v-for="i in banners">
            <a :href="i.link">
-             <img :src="i.image" alt="">
+             <img :src="i.image" alt="" @load="SimageLoda"  >
            </a>
          </swipe-item>
        </swipe>
      <recommand :recommends="recommends"/>
      <feature-view/>
-     <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick"/>
+     <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick" />
      <goods-list :goods="showGoods"/>
    </scroll>
        <!--  加上native才能监听-->
@@ -90,7 +90,10 @@
         //默认显示种类
         currentType:'pop',
         isShow : false ,
-        tabOffsetTop:0,
+
+        LoadTime:true,
+        tabOffsetTop:530,
+        middleTop:null,
         tabFixed:false,
       }
     },
@@ -107,7 +110,6 @@
       const refresh = debounce(this.$refs.scroll.refresh(),50);
       //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
       this.$bus.$on('itemImageLoad',()=>{
-        console.log("-=--");
         refresh()
       })
 
@@ -132,11 +134,15 @@
         }
       },
 
+      //读取图片位置
+
       //滚动位置监听
       contentScroll(position){
         //判断backTop是否显示
         this.isShow = -(position.y) > 1500 ? true:false;
         //判断tabControl是否吸顶
+        console.log(this.tabOffsetTop);
+        //this.middleTop = this.getTabTop();
         this.tabFixed = -(position.y)>this.tabOffsetTop ? true:false
       },
       //上拉加载更多
@@ -144,11 +150,16 @@
         this.getHomeGoods(this.currentType )
         this.$refs.scroll.scroll.refresh()
       },
-      ImageLoda(){
-        console.log(this.$refs.tabControl.$el.offsetTop);
-        console.log("1111");
-        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+
+      //监听轮播图是否加载完毕
+      SimageLoda(){
+        if (this.LoadTime){
+          this.LoadTime = false ;
+          console.log(this.LoadTime);
+
+        }
       },
+
       /*
       * 网络请求
       */
@@ -157,7 +168,7 @@
           this.banners = res.data.banner.list;
           console.log(this.banners);
           this.recommends = res.data.recommend.list;
-          console.log(res);
+
         })
       },
       getHomeGoods(type){
@@ -175,14 +186,14 @@
 
 <style scoped>
   #home{
-
+    padding-top: 44px;
     height: 100vh;
   }
   .home-nav {
     background-color: var(--color-tint);
     color: #45454d;
     z-index: 9;
-    position: relative;
+    position:fixed;
     left: 0px;
     right: 0px;
 
