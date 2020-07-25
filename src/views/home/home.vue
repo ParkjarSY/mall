@@ -116,8 +116,11 @@
       
     },
     activated(){//活跃
+    this.$refs.scroll.refresh()//刷新防止bug
+    
     this.$refs.scroll.scrollTo(0,this.saveY,0)
-    this.$refs.scroll.refresh()
+
+    
     },
     deactivated(){//不活跃，离开页面
     this.saveY = this.$refs.scroll.getScrollY()
