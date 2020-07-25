@@ -14,7 +14,9 @@
                     @tabClick="tabClick"
                     v-show="tabFixed"
                     ref="tabControl"
-                    class="tab-control"/>
+                    class="tabControl"/>
+
+
      <scroll class="content"
                ref="scroll"
                :probe-type="3"
@@ -26,13 +28,13 @@
        <swipe class="my-swipe">
          <swipe-item v-for="i in banners">
            <a :href="i.link">
-             <img :src="i.image" alt="" @load="SimageLoda"  >
+             <img :src="i.image" alt=""   >
            </a>
          </swipe-item>
        </swipe>
      <recommand :recommends="recommends"/>
      <feature-view/>
-     <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick" />
+     <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick"  onload="SimageLoda"/>
      <goods-list :goods="showGoods"/>
    </scroll>
        <!--  加上native才能监听-->
@@ -95,6 +97,7 @@
         tabOffsetTop:530,
         middleTop:null,
         tabFixed:false,
+        saveY:0,
       }
     },
     //生命周期函数
@@ -104,20 +107,26 @@
      this.getHomeGoods('pop');
      this.getHomeGoods('new');
      this.getHomeGoods('sell');
-    },
-    mounted(){
-      //防抖函数的使用
-      const refresh = debounce(this.$refs.scroll.refresh(),50);
-      //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
-      this.$bus.$on('itemImageLoad',()=>{
+     this.$bus.$on('itemImageLoad',()=>{
         refresh()
       })
-
-
+       //防抖函数的使用
+      const refresh = debounce(this.$refs.scroll.refresh(),50);
+      //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
+      
     },
+    activated(){//活跃
+    this.$refs.scroll.scrollTo(0,this.saveY,0)
+    this.$refs.scroll.refresh()
+    },
+    deactivated(){//不活跃，离开页面
+    this.saveY = this.$refs.scroll.getScrollY()
+    
+    },
+    // mounted(){
+    // },
     methods:{
-      //防抖
-
+     
       //返回顶部,访问组件的scrollTO方法
       backClick(){
         this.$refs.scroll.scrollTo(0,0,600)
@@ -150,15 +159,12 @@
         this.getHomeGoods(this.currentType )
         this.$refs.scroll.scroll.refresh()
       },
-
-      //监听轮播图是否加载完毕
-      SimageLoda(){
-        if (this.LoadTime){
-          this.LoadTime = false ;
-          console.log(this.LoadTime);
-
-        }
+      getoffsetTop(){
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+        console.log(this.tabOffsetTop);
+        console.log("hhh")
       },
+      //监听轮播图是否加载完毕
 
       /*
       * 网络请求
@@ -208,8 +214,8 @@
   .my-swipe img {
     width: 100%;
   }
-  .tab-control{
-    position: fixed;
+  .tabControl{
+    position:fixed;
     left: 0px;
     right: 0px;
     background: #fff;

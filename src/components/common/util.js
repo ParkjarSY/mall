@@ -3,7 +3,7 @@
   return function(...args) {
     if(timer) clearTimeout(timer)
     setTimeout(()=>{
-      func.apply(args)
+      func.apply(args())
     },delay)
   }
 }

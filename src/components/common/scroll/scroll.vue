@@ -46,16 +46,19 @@
       })
       this.scroll.scrollTo(0,0)
     },
-    methods:{
+    methods:{//移动到指定位置
       scrollTo(x,y,time=300){
         this.scroll && this.scrollTo &&this.scroll.scrollTo(x,y,time)
       },
       finishPullUp(){
        this.scroll.finishPullUp()
-      },
+      },//刷新
       refresh(){
        this.scroll && this.scroll.refresh()
         console.log("刷新");
+      },
+      getScrollY(){//获取y的值
+        return this.scroll ? this.scroll.y:0//如果有值返回y的位置，如果没有返回0
       }
     }
   }
