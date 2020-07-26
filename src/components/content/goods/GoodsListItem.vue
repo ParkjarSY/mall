@@ -1,5 +1,5 @@
 <template>
-    <div class="goods">
+    <div class="goods" @click="itemClick">
       <img :src="goodItem.show.img" alt="" @load="imageLoad">
       <div class="goods-info">
         <p>{{goodItem.title}}</p>
@@ -26,6 +26,15 @@
         //用bus 总线来更改信息
 
         this.$bus.$emit('itemImageLoad')
+      },
+      itemClick(){
+        this.$router.push('/detail/' + this.goodItem.iid)
+        // this.$router.push({
+        //   path:'/detail',
+        //   query:{
+            
+        //   }
+        // })
       }
     }
   }

@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import { component } from 'vue/types/umd'
 
 const Home = () => import('views/home/home')
 const Message = () => import('views/message/message')
 const Users = () => import('views/users/users')
 const Profile = () => import('views/profile/profile')
-const ShopCat = () =>import('views/shopcat/ShopCat')
+const ShopCat = () => import('views/shopcat/ShopCat')
+const Detail = () => import('views/detail/detail')
 
 Vue.use(VueRouter)
 
@@ -33,7 +35,12 @@ const routes = [
   {
     path:'/shopcat',
     component:ShopCat,
-  }
+  },
+  {
+    path:'/detail/:id',
+    component:Detail,
+  },
+
 ]
 
 const Router = new VueRouter({

@@ -26,7 +26,7 @@
        >
 
        <swipe class="my-swipe">
-         <swipe-item v-for="i in banners">
+         <swipe-item v-for="(i,key) in banners" :key=key>
            <a :href="i.link">
              <img :src="i.image" alt=""   >
            </a>
