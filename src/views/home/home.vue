@@ -8,38 +8,33 @@
       </nav-bar>
 
     </div>
-
-     <div id="home" >
-       <tab-control :titls="['最新','推荐','热门']"
-                    @tabClick="tabClick"
-                    v-show="tabFixed"
-                    ref="tabControl"
-                    class="tabControl"/>
-
-
-     <scroll class="content"
-               ref="scroll"
-               :probe-type="3"
-               @scroll="contentScroll"
-               :pull-up-load="true"
-               @pullingUp="loadMore"
-       >
-
-       <swipe class="my-swipe">
-         <swipe-item v-for="(i,key) in banners" :key=key>
-           <a :href="i.link">
-             <img :src="i.image" alt=""   >
-           </a>
-         </swipe-item>
-       </swipe>
-     <recommand :recommends="recommends"/>
-     <feature-view/>
-     <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick"  onload="SimageLoda"/>
-     <goods-list :goods="showGoods"/>
-   </scroll>
-       <!--  加上native才能监听-->
-       <back-top @click.native="backClick" v-show="isShow"/>
-     </div>
+    <div id="home" >
+      <tab-control :titls="['最新','推荐','热门']"
+                   @tabClick="tabClick"
+                   v-show="tabFixed"
+                   ref="tabControl"
+                   class="tabControl"/>
+      <scroll class="content"
+              ref="scroll"
+              :probe-type="3"
+              @scroll="contentScroll"
+              :pull-up-load="true"
+              @pullingUp="loadMore">
+        <swiper class="my-swipe">
+          <swipe-item v-for="(i,key) in banners" :key=key>
+            <a :href="i.link">
+              <img :src="i.image" alt=""   />
+            </a>
+          </swipe-item>
+        </swiper>
+        <recommand :recommends="recommends"/>
+        <feature-view/>
+        <tab-control :titls="['最新','推荐','热门']"  @tabClick="tabClick"  onload="SimageLoda"/>
+        <goods-list :goods="showGoods"/>
+      </scroll>
+      <!--  加上native才能监听-->
+      <back-top @click.native="backClick" v-show="isShow"/>
+    </div>
   </div>
 </template>
 
@@ -52,7 +47,7 @@
 
   import Recommand from './childP/JCRecommendHome'
   import FeatureView from './childP/FeatureView'
-  import { Swipe, SwipeItem } from 'components/common/swiper/index';
+  import { Swiper, SwipeItem } from 'components/common/swiper/index';
 
   import {debounce} from "components/common/util";
 
@@ -73,7 +68,7 @@
       FeatureView,
       Recommand,
       SwipeItem,
-      Swipe,
+      Swiper,
     },
     computed:{
       showGoods(){
@@ -107,29 +102,31 @@
      this.getHomeGoods('pop');
      this.getHomeGoods('new');
      this.getHomeGoods('sell');
-     this.$bus.$on('itemImageLoad',()=>{
+
+      //防抖函数的使用
+      let refresh = debounce(this.$refs.scroll.refresh(),50);
+      //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
+      this.$bus.$on('itemImageLoad',()=>{
         refresh()
       })
-       //防抖函数的使用
-      const refresh = debounce(this.$refs.scroll.refresh(),50);
-      //解决上拉加载更多的bug，通过监听图片的加载来调用refresh函数
-      
+
+
+    },
+    mounted() {
     },
     activated(){//活跃
     this.$refs.scroll.refresh()//刷新防止bug
-    
+
     this.$refs.scroll.scrollTo(0,this.saveY,0)
 
-    
+
     },
     deactivated(){//不活跃，离开页面
     this.saveY = this.$refs.scroll.getScrollY()
-    
+
     },
-    // mounted(){
-    // },
     methods:{
-     
+
       //返回顶部,访问组件的scrollTO方法
       backClick(){
         this.$refs.scroll.scrollTo(0,0,600)
@@ -173,11 +170,10 @@
       * 网络请求
       */
       getHomeMultiData(){
-        getHomeMultiData(  ).then( res =>{
+        getHomeMultiData().then( res =>{
           this.banners = res.data.banner.list;
           console.log(this.banners);
           this.recommends = res.data.recommend.list;
-
         })
       },
       getHomeGoods(type){
@@ -185,7 +181,6 @@
         getHomeGoods(type,page).then(res =>{
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page +=1
-
           this.$refs.scroll.finishPullUp()
         })
       },

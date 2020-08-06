@@ -10,6 +10,8 @@
     "axios": "^0.19.2",
     "better-scroll": "^1.15.2",
     "core-js": "^3.6.4",
+    "qs": "^6.9.4",
+    "url-search-params-polyfill": "^8.1.0",
     "vue": "^2.6.11",
     "vue-awesome-swiper": "^4.0.4",
     "vue-router": "^3.1.6",
@@ -20,5 +22,18 @@
     "@vue/cli-service": "~4.2.0",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0"
-  }
+  },
+  "description": "请在网络条件好的情况下使用 推荐使用谷歌浏览器，打开控制台，选择用手机的浏览模式 现存bug，网页打开后需要再刷新一次，否则会有很多问题 ## Project setup ``` npm install ```",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ParkjarSY/mall.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ParkjarSY/mall/issues"
+  },
+  "homepage": "https://github.com/ParkjarSY/mall#readme"
 }
